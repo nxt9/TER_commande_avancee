@@ -144,7 +144,7 @@ Ki=1/(sqrt(a)*Tau*Kt);
 % str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
 % title(str)
 % end
-%% Robustesse Correcteur proportionnel
+%% Robustesse Correcteur PI
 for n=1:1:5
 M=[0 10 15 20 30];
 J=Jr+(m+M(n))*(pas/(2*pi))^2;
