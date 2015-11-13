@@ -10,7 +10,7 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t_echant=10^-2;
 start=0;
-stop=200;
+stop=20;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Configuration simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,6 +19,8 @@ BF=0; %%%% 1 =BO
       %%%% 0 =BF
 PI=1; %%%% 1:PI
       %%%% 0:P
+Perturb=0; %%%% 0:aucune
+          %%%% 1:active
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Définition des paramètres du système
@@ -46,6 +48,14 @@ Kt=Kred*Ka*Kc*K;
 %% Consigne
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ech=0.1;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Perturbation
+tperturb= 5;
+Pert=0,1;
+
+%% Etude Bode
+
+%=> a faire
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Correction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,12 +89,13 @@ Ti=1;
 % end
 %% Autre methode
 %Kprop=1/(4*Kt*Tau);
-%% Correcteur PI
+%% Correcteur PI + Filtre
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%% Marge de phase °
-Mphi=89;
+Mphi=45;
 phim=pi/180*Mphi;
 a=(1+sin(phim))/(1-sin(phim));
+%a=(tan(Mphi/2+(pi/4)))^2;
 Ti=a*Tau;
 Ki=1/(sqrt(a)*Tau*Kt);
 %% Algorithme %%%%%%%%%%%%%%%%% MARCHE PAS ENCORE %%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +130,7 @@ Ki=1/(sqrt(a)*Tau*Kt);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Essais
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Robustesse Correcteur proportionnel
+% %%Robustesse Correcteur proportionnel
 % for n=1:1:5
 % M=[0 10 15 20 30];
 % J=Jr+(m+M(n))*(pas/(2*pi))^2;
@@ -144,46 +155,50 @@ Ki=1/(sqrt(a)*Tau*Kt);
 % str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
 % title(str)
 % end
-%% Robustesse Correcteur proportionnel
-for n=1:1:5
-M=[0 10 15 20 30];
-J=Jr+(m+M(n))*(pas/(2*pi))^2;
-Tau=J/f;
-Ti=a*Tau;
-Ki=1/(sqrt(a)*Tau*Kt); 
-figure(n)
-coul=['r','g','y','b','m'];
-d_tab=[];
-for i=1:1:5
-J=Jr+(m+M(i))*(pas/(2*pi))^2;
-Tau=J/f;
-sim 'modele'
 
-hold on
-  plot(t,dep_plat,coul(i)); 
-  grid on;
-end
-legend('M=0','M=10','M=15','M=20','M=30'); 
-xlabel('Temps (sec)')
-ylabel('Déplacement (m)')
-
-str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
-title(str)
-end
-
+%% Robustesse Correcteur proportionnel Integral
+% for n=1:1:5
+% M=[0 10 15 20 30];
+% J=Jr+(m+M(n))*(pas/(2*pi))^2;
+% Tau=J/f;
+% Ti=a*Tau;
+% Ki=1/(sqrt(a)*Tau*Kt); 
+% figure(n)
+% coul=['r','g','y','b','m'];
+% d_tab=[];
+% for i=1:1:5
+% J=Jr+(m+M(i))*(pas/(2*pi))^2;
+% Tau=J/f;
+% sim 'modele'
+% 
+% hold on
+%   plot(t,dep_plat,coul(i)); 
+%   grid on;
+% end
+% legend('M=0','M=10','M=15','M=20','M=30'); 
+% xlabel('Temps (sec)')
+% ylabel('Déplacement (m)')
+% 
+% str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
+% title(str)
+% end
 
 %% Essai Correcteur PI
- sim 'modele'
+ 
+sim 'modele'
 figure(1)
-plot(t,U,'m',t,dep_plat,'b')
+plot(t,U,'m',t,dep_plat,'b');
+xlabel('Temps(s)');
+ylabel('Déplacement (mètres)');
 grid on
  
-%figure(1)
-% subplot (2,2,1);
-% 
-% plot (t,U);
-% grid on;
-% legend ('Commande');
+figure(2)
+plot (t,Commande);
+xlabel('Temps(s)');
+ylabel('Commande (volts)');
+grid on;
+
+title ('Commande');
 % 
 % subplot(2,2,3);
 % 
