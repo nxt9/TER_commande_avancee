@@ -15,9 +15,9 @@ stop=200;
 %% Configuration simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% SIMULATION
-BF=0; %%%% 1 =BO
+BF=1; %%%% 1 =BO
       %%%% 0 =BF
-PI=1; %%%% 1:PI
+PI=0; %%%% 1:PI
       %%%% 0:P
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,27 +56,27 @@ Ki=1;
 Ti=1;
 %% Algorithme de détermination du gain proportionnel idéal 
 %%%%% Nombre d'itération fixé. On trouve donc le meilleur gain pour ce nombre d'itération
-% Kprop_max=100;
-% Kprop_min=0;
-% DE=[];
-% n=0;
-% while (n<10 )
-% K_current=(Kprop_max+Kprop_min)/2;
-% Kprop=K_current;
-% sim 'modele'
-% 
-% %calcul depassement
-% D=(max(dep_plat)-dep_plat(length(dep_plat)))/dep_plat(length(dep_plat));
-%     if D > 0
-%         Kprop_max=K_current;
-%     else
-%         Kprop_min=K_current;
-%         n=n+1;
-%     end
-%  DE=[DE D]
-%  
-% 
-% end
+Kprop_max=100;
+Kprop_min=0;
+DE=[];
+n=0;
+while (n<10 )
+K_current=(Kprop_max+Kprop_min)/2;
+Kprop=K_current;
+sim 'modele'
+
+%calcul depassement
+D=(max(dep_plat)-dep_plat(length(dep_plat)))/dep_plat(length(dep_plat));
+    if D > 0
+        Kprop_max=K_current;
+    else
+        Kprop_min=K_current;
+        n=n+1;
+    end
+ DE=[DE D]
+ 
+
+end
 %% Autre methode
 %Kprop=1/(4*Kt*Tau);
 %% Correcteur PI
@@ -145,38 +145,38 @@ Ki=1/(sqrt(a)*Tau*Kt);
 % title(str)
 % end
 %% Robustesse Correcteur PI
-for n=1:1:5
-M=[0 10 15 20 30];
-J=Jr+(m+M(n))*(pas/(2*pi))^2;
-Tau=J/f;
-Ti=a*Tau;
-Ki=1/(sqrt(a)*Tau*Kt); 
-figure(n)
-coul=['r','g','y','b','m'];
-d_tab=[];
-for i=1:1:5
-J=Jr+(m+M(i))*(pas/(2*pi))^2;
-Tau=J/f;
-sim 'modele'
-
-hold on
-  plot(t,dep_plat,coul(i)); 
-  grid on;
-end
-legend('M=0','M=10','M=15','M=20','M=30'); 
-xlabel('Temps (sec)')
-ylabel('Déplacement (m)')
-
-str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
-title(str)
-end
+% for n=1:1:5
+% M=[0 10 15 20 30];
+% J=Jr+(m+M(n))*(pas/(2*pi))^2;
+% Tau=J/f;
+% Ti=a*Tau;
+% Ki=1/(sqrt(a)*Tau*Kt); 
+% figure(n)
+% coul=['r','g','y','b','m'];
+% d_tab=[];
+% for i=1:1:5
+% J=Jr+(m+M(i))*(pas/(2*pi))^2;
+% Tau=J/f;
+% sim 'modele'
+% 
+% hold on
+%   plot(t,dep_plat,coul(i)); 
+%   grid on;
+% end
+% legend('M=0','M=10','M=15','M=20','M=30'); 
+% xlabel('Temps (sec)')
+% ylabel('Déplacement (m)')
+% 
+% str=sprintf('Robustesse du correcteur vis à vis d''variation de masse (Correcteur synthétisé pour M=%d kg)',M(n));
+% title(str)
+% end
 
 
 %% Essai Correcteur PI
- sim 'modele'
-figure(1)
-plot(t,U,'m',t,dep_plat,'b')
-grid on
+%  sim 'modele'
+% figure(1)
+% plot(t,U,'m',t,dep_plat,'b')
+% grid on
  
 %figure(1)
 % subplot (2,2,1);
